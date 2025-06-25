@@ -1,0 +1,21 @@
+fastapi==0.95.2
+uvicorn[standard]==0.23.1
+python-dotenv==1.0.0
+pydantic==1.10.12
+PyMuPDF==1.22.5
+textract==1.6.5
+langchain==0.0.201
+langchain-openai==0.0.17
+langchain-core==0.0.24
+langchain-chroma==0.0.15
+langchain-community==0.0.4
+chromadb==0.3.27
+sqlalchemy==2.0.22
+pandas==2.0.3            # For Excel support
+openpyxl==3.1.2         # For reading .xlsx files
+typing_extensions==4.7.1 # Sometimes needed by langchain & Pydantic
+requests==2.31.0         # Often required for APIs
+aiohttp==3.8.5           # Async HTTP client used by some libs
+asyncio
+celery==5.3.1
+redis==4.5.5
