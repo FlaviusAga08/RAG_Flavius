@@ -1,28 +1,32 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from contextlib import contextmanager
-from domain.models import Base, QueryHistory
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker, declarative_base
+from contextlib import asynccontextmanager
+from domain.models import QueryHistory
 import json
 
+Base = declarative_base()
+
 class Database:
-    def __init__(self, db_url: str = "sqlite:///./history.db"):
-        self.engine = create_engine(db_url, connect_args={"check_same_thread": False})
-        self.SessionLocal = sessionmaker(bind=self.engine, autoflush=False, autocommit=False)
+    def __init__(self, db_url: str = "sqlite+aiosqlite:///./history.db"):
+        self.engine = create_async_engine(db_url, echo=False)
+        self.AsyncSessionLocal = sessionmaker(
+            bind=self.engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+        )
 
-    def create_tables(self):
-        Base.metadata.create_all(bind=self.engine)
+    async def create_tables(self):
+        async with self.engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
 
-    @contextmanager
-    def get_db(self) -> Session:
-        db = self.SessionLocal()
-        try:
-            yield db
-        finally:
-            db.close()
+    async def get_db(self) -> AsyncSession:
+        async with self.AsyncSessionLocal() as session:
+            yield session
 
-    def save_query(self, db: Session, query: str, result: str, sources: list[str]):
+
+    async def save_query(self, db: AsyncSession, query: str, result: str, sources: list[str]):
         sources_json = json.dumps(sources)
         entry = QueryHistory(query=query, result=result, sources=sources_json)
         db.add(entry)
-        db.commit()
+        await db.commit()
         return entry

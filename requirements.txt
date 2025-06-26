@@ -19,3 +19,4 @@ aiohttp==3.8.5           # Async HTTP client used by some libs
 asyncio
 celery==5.3.1
 redis==4.5.5
+watchdog==3.0.0
