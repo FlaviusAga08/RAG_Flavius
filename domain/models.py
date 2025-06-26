@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from sqlalchemy import Column, Integer, Text
+from sqlalchemy import Column, Integer, Text, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -11,7 +11,7 @@ class QueryHistory(Base):
     id = Column(Integer, primary_key=True, index=True)
     query = Column(Text, nullable=False)
     result = Column(Text, nullable=False)
-    sources = Column(Text, nullable=False)  # JSON
+    sources = Column(Text, nullable=False) 
 
 class QueryRequest(BaseModel):
     query: str
@@ -19,3 +19,4 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     result: str
     sources: List[str]
+
